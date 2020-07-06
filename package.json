@@ -1,0 +1,35 @@
+{
+  "name": "lazyass",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/thyphamdev/lazyass.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/thyphamdev/lazyass/issues"
+  },
+  "homepage": "https://github.com/thyphamdev/lazyass#readme",
+  "dependencies": {
+    "ajv": "^6.12.3",
+    "body-parser": "^1.19.0",
+    "cors": "^2.8.5",
+    "dotenv": "^8.2.0",
+    "express": "^4.17.1",
+    "helmet": "^3.23.3",
+    "lodash": "^4.17.15",
+    "mongodb": "^3.5.9",
+    "winston": "^3.3.3"
+  },
+  "devDependencies": {
+    "eslint": "^7.4.0",
+    "eslint-config-airbnb-base": "^14.2.0",
+    "eslint-plugin-import": "^2.22.0"
+  }
+}
