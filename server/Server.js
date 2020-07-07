@@ -3,7 +3,7 @@ const bodyParser = require('body-parser');
 const cors = require('cors');
 const helmet = require('helmet');
 
-const { Logger } = require('../Services');
+const { Logger } = require('../logger');
 const config = require('../config');
 
 class Server {

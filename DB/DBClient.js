@@ -1,7 +1,7 @@
 const { MongoClient } = require('mongodb');
 
 const config = require('../config');
-const { Logger } = require('../Services');
+const { Logger } = require('../logger');
 
 class DBClient {
   constructor() {
