@@ -7,6 +7,7 @@ class Json2Api {
     this.apiSchema = apiSchema;
   }
 
+  // eslint-disable-next-line class-methods-use-this
   addApiMethod(router, method, path, routeHandler) {
     if (!routeHandler) {
       return;
@@ -37,6 +38,10 @@ class Json2Api {
   }
 
   parseRoute(router, path, routeConfig) {
+    if (Array.isArray(routeConfig.middlewares) && routeConfig.middlewares.length > 0) {
+      router.use(path, ...routeConfig.middlewares);
+    }
+
     this.addSubRoutes(router, path, routeConfig);
     this.addApiMethod(router, 'get', path, routeConfig.get);
     this.addApiMethod(router, 'post', path, routeConfig.post);
