@@ -1,6 +1,8 @@
 const _ = require('lodash');
 const express = require('express');
 
+const validateRequest = require('./RequestValidator');
+
 class Json2Api {
   constructor(mainRouter, apiSchema) {
     this.mainRouter = mainRouter;
@@ -15,6 +17,21 @@ class Json2Api {
 
     if (typeof routeHandler === 'function') {
       router[method](path, routeHandler);
+      return;
+    }
+
+    let middlewares = [];
+
+    if (routeHandler.validation) {
+      middlewares.push(validateRequest(routeHandler.validation));
+    }
+
+    if (Array.isArray(routeHandler.middlewares)) {
+      middlewares = middlewares.concat(routeHandler.middlewares);
+    }
+
+    if (middlewares.length > 0) {
+      router[method](path, ...middlewares, routeHandler.controller);
       return;
     }
 
