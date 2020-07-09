@@ -5,6 +5,7 @@ const helmet = require('helmet');
 
 const { Logger } = require('../logger');
 const config = require('../config');
+const { ErrorHandler } = require('./middlewares');
 
 class Server {
   constructor() {
@@ -26,6 +27,9 @@ class Server {
   start() {
     this.useMiddlewares();
     this.useRouters();
+
+    // Must be at last, after all other middlewares
+    this.app.use(ErrorHandler);
 
     return new Promise((resolve) => {
       this.app.listen(this.port, () => {

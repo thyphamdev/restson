@@ -2,6 +2,7 @@ const _ = require('lodash');
 const express = require('express');
 
 const validateRequest = require('./RequestValidator');
+const ControllerWrapper = require('./ControllerWrapper');
 
 class Json2Api {
   constructor(mainRouter, apiSchema) {
@@ -16,26 +17,26 @@ class Json2Api {
     }
 
     if (typeof routeHandler === 'function') {
-      router[method](path, routeHandler);
+      router[method](path, ControllerWrapper(routeHandler));
       return;
     }
 
-    let middlewares = [];
+    const middlewares = [];
 
     if (routeHandler.validation) {
       middlewares.push(validateRequest(routeHandler.validation));
     }
 
     if (Array.isArray(routeHandler.middlewares)) {
-      middlewares = middlewares.concat(routeHandler.middlewares);
+      routeHandler.middlewares.forEach((mldw) => middlewares.push(ControllerWrapper(mldw)));
     }
 
     if (middlewares.length > 0) {
-      router[method](path, ...middlewares, routeHandler.controller);
+      router[method](path, ...middlewares, ControllerWrapper(routeHandler.controller));
       return;
     }
 
-    router[method](path, routeHandler.controller);
+    router[method](path, ControllerWrapper(routeHandler.controller));
   }
 
   addSubRoutes(router, path, routeConfig) {

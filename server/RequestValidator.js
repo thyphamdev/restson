@@ -15,8 +15,12 @@ function validate(schema, object) {
 }
 
 module.exports = (validationSchema) => (req, res, next) => {
-  validate(validationSchema.params, req.params);
-  validate(validationSchema.query, req.query);
-  validate(validationSchema.body, req.body);
-  next();
+  try {
+    validate(validationSchema.params, req.params);
+    validate(validationSchema.query, req.query);
+    validate(validationSchema.body, req.body);
+    next();
+  } catch (e) {
+    next(e);
+  }
 };
