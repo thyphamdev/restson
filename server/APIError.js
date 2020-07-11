@@ -1,5 +1,5 @@
 class APIError extends Error {
-  constructor(message, serverCode) {
+  constructor(message, serverCode = 500) {
     super(message);
     this.name = 'APIError';
     this.serverCode = serverCode;

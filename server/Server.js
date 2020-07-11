@@ -6,7 +6,7 @@ function useApi(jsonApi) {
 }
 
 class Server {
-  constructor({ port, apiSchema }) {
+  constructor({ port = 3000, apiSchema }) {
     this.port = port;
     this.apiSchema = apiSchema;
   }
