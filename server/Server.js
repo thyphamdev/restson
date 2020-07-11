@@ -1,21 +1,20 @@
 const ServerConfig = require('./ServerConfig');
-const APIError = require('./APIError');
 const Json2Api = require('./Json2Api');
-const ServerCodes = require('./ServerCodes');
+
+function useApi(jsonApi) {
+  new Json2Api(ServerConfig.app, jsonApi).convert();
+}
 
 class Server {
-  constructor() {
-    this.APIError = APIError;
-    this.ServerCodes = ServerCodes;
-  }
-
-  useApi(jsonApi) {
-    new Json2Api(ServerConfig.app, jsonApi).convert();
+  constructor({ port, apiSchema }) {
+    this.port = port;
+    this.apiSchema = apiSchema;
   }
 
   async start() {
-    await ServerConfig.start();
+    useApi(this.apiSchema);
+    await ServerConfig.start(this.port);
   }
 }
 
-module.exports = new Server();
+module.exports = Server;

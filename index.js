@@ -1,7 +1,9 @@
-const { Server } = require('./server');
-const { DBClient } = require('./DB');
+const Server = require('./server/Server');
+const APIError = require('./server/APIError');
+const ServerCodes = require('./server/ServerCodes');
 
 module.exports = {
   Server,
-  DBClient,
+  APIError,
+  ServerCodes,
 };

@@ -4,12 +4,10 @@ const cors = require('cors');
 const helmet = require('helmet');
 
 const { Logger } = require('../logger');
-const config = require('../config');
 const { ErrorHandler } = require('./middlewares');
 
 class ServerConfig {
   constructor() {
-    this.port = config.server.port;
     this.app = express();
   }
 
@@ -24,7 +22,7 @@ class ServerConfig {
     this.app.get('/health', (req, res) => res.send('ok'));
   }
 
-  start() {
+  start(port) {
     this.useMiddlewares();
     this.useRouters();
 
@@ -32,8 +30,8 @@ class ServerConfig {
     this.app.use(ErrorHandler);
 
     return new Promise((resolve) => {
-      this.app.listen(this.port, () => {
-        Logger.info(`Server started at port ${this.port}`);
+      this.app.listen(port, () => {
+        Logger.info(`Server started at port ${port}`);
         resolve(true);
       });
     });
