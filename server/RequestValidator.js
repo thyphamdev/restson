@@ -19,6 +19,7 @@ module.exports = (validationSchema) => (req, res, next) => {
     validate(validationSchema.params, req.params);
     validate(validationSchema.query, req.query);
     validate(validationSchema.body, req.body);
+    validate(validationSchema.headers, req.headers);
     next();
   } catch (e) {
     next(e);
