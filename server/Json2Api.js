@@ -4,39 +4,48 @@ const express = require('express');
 const validateRequest = require('./RequestValidator');
 const ControllerWrapper = require('./ControllerWrapper');
 
+function getMiddlewares(mainValidation, routeConfig) {
+  let middlewares = [];
+
+  if (mainValidation || routeConfig.validation) {
+    middlewares.push(validateRequest(_.assign(mainValidation, routeConfig.validation)));
+  }
+
+  if (Array.isArray(routeConfig.middlewares)) {
+    middlewares = _.concat(middlewares, routeConfig.middlewares);
+  }
+
+  return middlewares;
+}
+
+function getController(routerConfig) {
+  if (typeof routerConfig === 'function') {
+    return routerConfig;
+  }
+
+  return routerConfig.controller;
+}
+
+function addApiMethod(router, method, path, routeHandler, mainValidation) {
+  if (!routeHandler || !routeHandler.controller) {
+    return;
+  }
+
+  const middlewares = getMiddlewares(mainValidation, routeHandler);
+  const controller = getController(routeHandler);
+
+  if (middlewares.length > 0) {
+    router[method](path, ...middlewares, ControllerWrapper(controller));
+    return;
+  }
+
+  router[method](path, ControllerWrapper(controller));
+}
+
 class Json2Api {
   constructor(mainRouter, apiSchema) {
     this.mainRouter = mainRouter;
     this.apiSchema = apiSchema;
-  }
-
-  // eslint-disable-next-line class-methods-use-this
-  addApiMethod(router, method, path, routeHandler) {
-    if (!routeHandler) {
-      return;
-    }
-
-    if (typeof routeHandler === 'function') {
-      router[method](path, ControllerWrapper(routeHandler));
-      return;
-    }
-
-    const middlewares = [];
-
-    if (routeHandler.validation) {
-      middlewares.push(validateRequest(routeHandler.validation));
-    }
-
-    if (Array.isArray(routeHandler.middlewares)) {
-      routeHandler.middlewares.forEach((mldw) => middlewares.push(ControllerWrapper(mldw)));
-    }
-
-    if (middlewares.length > 0) {
-      router[method](path, ...middlewares, ControllerWrapper(routeHandler.controller));
-      return;
-    }
-
-    router[method](path, ControllerWrapper(routeHandler.controller));
   }
 
   addSubRoutes(router, path, routeConfig) {
@@ -61,15 +70,17 @@ class Json2Api {
     }
 
     this.addSubRoutes(router, path, routeConfig);
-    this.addApiMethod(router, 'get', path, routeConfig.get);
-    this.addApiMethod(router, 'post', path, routeConfig.post);
-    this.addApiMethod(router, 'put', path, routeConfig.put);
-    this.addApiMethod(router, 'delete', path, routeConfig.delete);
+    addApiMethod(router, 'get', path, routeConfig.get, routeConfig.validation);
+    addApiMethod(router, 'post', path, routeConfig.post, routeConfig.validation);
+    addApiMethod(router, 'put', path, routeConfig.put, routeConfig.validation);
+    addApiMethod(router, 'delete', path, routeConfig.delete, routeConfig.validation);
   }
 
   convert() {
     _.keys(this.apiSchema).forEach((key) => {
-      this.parseRoute(this.mainRouter, key, this.apiSchema[key]);
+      if (key[0] === '/') {
+        this.parseRoute(this.mainRouter, key, this.apiSchema[key]);
+      }
     });
   }
 }
