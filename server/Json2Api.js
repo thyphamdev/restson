@@ -5,34 +5,64 @@ const validateRequest = require('./RequestValidator');
 const ControllerWrapper = require('./ControllerWrapper');
 
 function getMiddlewares(mainValidation, routeConfig) {
-  let middlewares = [];
+  const middlewares = [];
+  const routeValidation = _.get(routeConfig, 'validation');
+  const routeMiddlewares = _.get(routeConfig, 'middlewares');
 
-  if (mainValidation || routeConfig.validation) {
-    middlewares.push(validateRequest(_.assign(mainValidation, routeConfig.validation)));
+  if (mainValidation || routeValidation) {
+    middlewares.push(validateRequest(_.assign(mainValidation, routeValidation)));
   }
 
-  if (Array.isArray(routeConfig.middlewares)) {
-    middlewares = _.concat(middlewares, routeConfig.middlewares);
+  if (routeConfig && Array.isArray(routeMiddlewares)) {
+    routeMiddlewares.forEach((mdlw) => middlewares.push(ControllerWrapper(mdlw)));
   }
 
   return middlewares;
 }
 
-function getController(routerConfig) {
+function getController(routerConfig, dir) {
+  if (!routerConfig) {
+    return null;
+  }
+
   if (typeof routerConfig === 'function') {
     return routerConfig;
   }
 
-  return routerConfig.controller;
-}
+  if (typeof routerConfig === 'string') {
+    if (routerConfig.startsWith('./')) {
+      return require.main.require(routerConfig);
+    }
 
-function addApiMethod(router, method, path, routeHandler, mainValidation) {
-  if (!routeHandler || !routeHandler.controller) {
-    return;
+    const fullDir = dir ? `./${dir}/${routerConfig}` : `./${routerConfig}`;
+    // eslint-disable-next-line global-require,import/no-dynamic-require
+    return require.main.require(fullDir);
   }
 
+  if (typeof routerConfig.controller === 'function') {
+    return routerConfig.controller;
+  }
+
+  if (typeof routerConfig.controller === 'string') {
+    if (routerConfig.controller.startsWith('./')) {
+      return require.main.require(routerConfig.controller);
+    }
+
+    const fullDir = dir ? `./${dir}/${routerConfig.controller}` : `./${routerConfig.controller}`;
+    // eslint-disable-next-line global-require,import/no-dynamic-require
+    return require.main.require(fullDir);
+  }
+
+  return null;
+}
+
+function addApiMethod(router, method, path, routeHandler, mainValidation, dir) {
   const middlewares = getMiddlewares(mainValidation, routeHandler);
-  const controller = getController(routeHandler);
+  const controller = getController(routeHandler, dir);
+
+  if (!controller) {
+    return;
+  }
 
   if (middlewares.length > 0) {
     router[method](path, ...middlewares, ControllerWrapper(controller));
@@ -48,14 +78,14 @@ class Json2Api {
     this.apiSchema = apiSchema;
   }
 
-  addSubRoutes(router, path, routeConfig) {
+  addSubRoutes(router, path, routeConfig, dir) {
     const subRoute = express.Router();
     let isSubRouteAvailable = false;
 
     _.keys(routeConfig).forEach((key) => {
       if (key[0] === '/') {
         isSubRouteAvailable = true;
-        this.parseRoute(subRoute, key, routeConfig[key]);
+        this.parseRoute(subRoute, key, routeConfig[key], dir);
       }
     });
 
@@ -64,22 +94,34 @@ class Json2Api {
     }
   }
 
-  parseRoute(router, path, routeConfig) {
+  parseRoute(router, path, routeConfig, dir) {
+    let subDir = routeConfig.dir;
+
+    if (dir && routeConfig.dir && !routeConfig.dir.startsWith('./')) {
+      subDir = `${dir}/${routeConfig.dir}`;
+    }
+
+    if (dir && !routeConfig.dir) {
+      subDir = dir;
+    }
+
     if (Array.isArray(routeConfig.middlewares) && routeConfig.middlewares.length > 0) {
       router.use(path, ...routeConfig.middlewares);
     }
 
-    this.addSubRoutes(router, path, routeConfig);
-    addApiMethod(router, 'get', path, routeConfig.get, routeConfig.validation);
-    addApiMethod(router, 'post', path, routeConfig.post, routeConfig.validation);
-    addApiMethod(router, 'put', path, routeConfig.put, routeConfig.validation);
-    addApiMethod(router, 'delete', path, routeConfig.delete, routeConfig.validation);
+    this.addSubRoutes(router, path, routeConfig, subDir);
+    addApiMethod(router, 'get', path, routeConfig.get, routeConfig.validation, subDir);
+    addApiMethod(router, 'post', path, routeConfig.post, routeConfig.validation, subDir);
+    addApiMethod(router, 'put', path, routeConfig.put, routeConfig.validation, subDir);
+    addApiMethod(router, 'delete', path, routeConfig.delete, routeConfig.validation, subDir);
   }
 
   convert() {
+    const { dir } = this.apiSchema;
+
     _.keys(this.apiSchema).forEach((key) => {
       if (key[0] === '/') {
-        this.parseRoute(this.mainRouter, key, this.apiSchema[key]);
+        this.parseRoute(this.mainRouter, key, this.apiSchema[key], dir);
       }
     });
   }
