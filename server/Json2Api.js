@@ -4,17 +4,29 @@ const express = require('express');
 const validateRequest = require('./RequestValidator');
 const ControllerWrapper = require('./ControllerWrapper');
 
-function getMiddlewares(mainValidation, routeConfig) {
+function getMiddlewares(mainValidation, routeConfig, dir) {
   const middlewares = [];
   const routeValidation = _.get(routeConfig, 'validation');
   const routeMiddlewares = _.get(routeConfig, 'middlewares');
 
   if (mainValidation || routeValidation) {
-    middlewares.push(validateRequest(_.assign(mainValidation, routeValidation)));
+    middlewares.push(validateRequest(_.assign(mainValidation, routeValidation), dir));
   }
 
   if (routeConfig && Array.isArray(routeMiddlewares)) {
-    routeMiddlewares.forEach((mdlw) => middlewares.push(ControllerWrapper(mdlw)));
+    routeMiddlewares.forEach((mdlw) => {
+      if (typeof mdlw === 'string') {
+        if (mdlw.startsWith('./')) {
+          middlewares.push(ControllerWrapper(require.main.require(mdlw)));
+        } else if (dir) {
+          middlewares.push(ControllerWrapper(require.main.require(`./${dir}/${mdlw}`)));
+        } else {
+          middlewares.push(ControllerWrapper(require.main.require(`./${mdlw}`)));
+        }
+      } else {
+        middlewares.push(ControllerWrapper(mdlw));
+      }
+    });
   }
 
   return middlewares;
@@ -57,7 +69,7 @@ function getController(routerConfig, dir) {
 }
 
 function addApiMethod(router, method, path, routeHandler, mainValidation, dir) {
-  const middlewares = getMiddlewares(mainValidation, routeHandler);
+  const middlewares = getMiddlewares(mainValidation, routeHandler, dir);
   const controller = getController(routeHandler, dir);
 
   if (!controller) {
@@ -106,7 +118,23 @@ class Json2Api {
     }
 
     if (Array.isArray(routeConfig.middlewares) && routeConfig.middlewares.length > 0) {
-      router.use(path, ...routeConfig.middlewares);
+      const middlewares = [];
+
+      routeConfig.middlewares.forEach((mdlw) => {
+        if (typeof mdlw === 'string') {
+          if (mdlw.startsWith('./')) {
+            middlewares.push(ControllerWrapper(require.main.require(mdlw)));
+          } else if (dir) {
+            middlewares.push(ControllerWrapper(require.main.require(`./${dir}/${mdlw}`)));
+          } else {
+            middlewares.push(ControllerWrapper(require.main.require(`./${mdlw}`)));
+          }
+        } else {
+          middlewares.push(ControllerWrapper(mdlw));
+        }
+      });
+
+      router.use(path, ...middlewares);
     }
 
     this.addSubRoutes(router, path, routeConfig, subDir);
