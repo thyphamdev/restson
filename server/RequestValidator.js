@@ -1,28 +1,13 @@
 const Ajv = require('ajv');
 
 const ValidationError = require('./ValidationError');
+const ModuleGetter = require('./ModuleGetter');
 
 const ajv = new Ajv({ allErrors: true });
 
 function validate(schema, object, dir) {
-  let validationSchema;
-
-  if (typeof schema === 'string') {
-    if (schema.startsWith('./')) {
-      validationSchema = require.main.require(schema);
-    } else if (dir) {
-      validationSchema = require.main.require(`./${dir}/${schema}`);
-    } else {
-      validationSchema = require.main.require(`./${schema}`);
-    }
-  }
-
-  if (typeof schema === 'object') {
-    validationSchema = schema;
-  }
-
-  if (validationSchema) {
-    const valid = ajv.validate(validationSchema, object);
+  if (schema) {
+    const valid = ajv.validate(ModuleGetter.getModule(schema, dir), object);
 
     if (!valid) {
       throw new ValidationError(ajv.errorsText(), ajv.errors);

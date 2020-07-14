@@ -9,6 +9,7 @@ const { ErrorHandler } = require('./middlewares');
 class ServerConfig {
   constructor() {
     this.app = express();
+    this.useMiddlewares();
   }
 
   useMiddlewares() {
@@ -18,14 +19,7 @@ class ServerConfig {
     this.app.use(helmet());
   }
 
-  useRouters() {
-    this.app.get('/health', (req, res) => res.send('ok'));
-  }
-
   start(port) {
-    this.useMiddlewares();
-    this.useRouters();
-
     // Must be at last, after all other middlewares
     this.app.use(ErrorHandler);
 
