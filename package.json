@@ -1,21 +1,21 @@
 {
-  "name": "lazyass",
+  "name": "json2api",
   "version": "1.0.0",
-  "description": "",
+  "description": "Simple REST API design and implementation, all in one JSON file, for Node",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/thyphamdev/lazyass.git"
+    "url": "git+https://github.com/thyphamdev/json2api.git"
   },
   "author": "Thy Pham",
-  "license": "ISC",
+  "license": "MIT",
   "bugs": {
-    "url": "https://github.com/thyphamdev/lazyass/issues"
+    "url": "https://github.com/thyphamdev/json2api/issues"
   },
-  "homepage": "https://github.com/thyphamdev/lazyass#readme",
+  "homepage": "https://github.com/thyphamdev/json2api#readme",
   "dependencies": {
     "ajv": "^6.12.3",
     "body-parser": "^1.19.0",
