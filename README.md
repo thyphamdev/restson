@@ -1,5 +1,6 @@
 # Json2Api
 Simple REST API design and implementation, all in one JSON file, for [Node](https://nodejs.org/en/)
+
 ## Motivation
 After 3 years working with Node + Express to build Backend applications, I have faced a couple of problems
 related to REST APIs implementation:
@@ -14,9 +15,12 @@ Which again make it hard to track when the amount of Endpoints increases.
 have to be in the try / catch block, and call next(err) at the end to pass the error to Error Handler middleware.
 
 With all the reasons above, I decided to write this small library, with a hope to help my beloved fellow devs
-have an easier way to Design and implement the REST APIs for the Backend apps.
+have an easier way to Design and implement the REST APIs for the Backend apps. The general principal is,
+we focus on writing the Endpoint handlers, middlewares, request validation schema only, each in one file.
+All the APIs can be written in one JSON file, no need to declare routers. This way enforce a cleaner 
+architecture and all devs can have a much clearer overview on the whole API set.
 
-## How it work?  
+## Quick start  
 ### Sample project
 We wanna have a set of REST APIs:
 ````
@@ -36,7 +40,7 @@ Directory structure
 │   ├── articles
 │   │   ├── getArticles.js
 │   │   ├── getArticleById.js
-│   │   ├── getArticleById.params.validation.json
+│   │   ├── getArticleById.params.validation.json // Written in JSON Schema - https://json-schema.org/
 │   ├── middlewares
 │   │   ├── printDate.js
 ├── my.api.schema.json
@@ -83,3 +87,31 @@ const apiSchema = require('./my.api.schema.v1');
 
 new Server({ apiSchema, rootUrl: '/api/v1' }).start();
 ```
+
+## Writing endpoint handlers, middlewares
+This lib enforces writing each endpoint handler in one js file only, the handler function must be exported at
+the end. The same rule applies to middlewares as well.
+```javascript
+module.exports = (req, res) => res.send('Hello from an endpoint handler!');
+```
+
+## API Json Schema
+The API Json Schema includes 5 different key types:
+* `dir: string`: The main directory where the Endpoint handlers, middlewares and validation schemas are placed
+* `middlewares: array<string>`: A list of middlewares' file paths, each middleware is declared in one file.
+The order of the list will be the executed order of the middlewares.
+* `validation: object`: Declare the validation schemas of the endpoint. The validation schema is defined using 
+[Json schema](https://json-schema.org/)
+  * `headers`: Validation schema's file path for the request's headers 
+  * `body`: Validation schema's file path for the request's body 
+  * `params`: Validation schema's file path for the request's parameters 
+  * `query`: Validation schema's file path for the request's query
+* `get, post, put, delete: string | object`: define the method of the Endpoint. The value can be a string (file
+path of the endpoint handler) or an object:
+  * `controller: string`: file path of the endpoint handler
+  * `validation: object`: Same format as the `validation` key above. This is the validation of this specific
+  endpoint and method
+  * `middlewares`:  Same format as the `middlewares` key above. This is the middlewares of this specific
+  endpoint and method
+* Key which start with `/`. (E.g. `/orders`): This key define the Endpoint of the url. The value of it
+can have the same keys as defined above or also the sub routes.
