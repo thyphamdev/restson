@@ -95,7 +95,17 @@ the end. The same rule applies to middlewares as well.
 module.exports = (req, res) => res.send('Hello from an endpoint handler!');
 ```
 
+````javascript
+module.exports = (req, res, next) => {
+  console.log('Hello from a middleware!!!');
+  console.log(new Date().toISOString());
+  next();
+}
+````
+
 ## API Json Schema
+
+### Keys
 The API Json Schema includes 5 different key types:
 * `dir: string`: The main directory where the Endpoint handlers, middlewares and validation schemas are placed
 * `middlewares: array<string>`: A list of middlewares' file paths, each middleware is declared in one file.
@@ -115,3 +125,36 @@ path of the endpoint handler) or an object:
   endpoint and method
 * Key which start with `/`. (E.g. `/orders`): This key define the Endpoint of the url. The value of it
 can have the same keys as defined above or also the sub routes.
+
+### File path
+the file path to the endpoint handler can be the relative path (depend on `dir` value):
+```json
+{
+  "dir": "controllers",
+  "/orders": {
+    "dir": "orders",
+    "get": {
+      "controller": "getOrders" // The handler is placed at ./controllers/orders/getOrders.js
+    }
+  },
+  "middlewares": [
+    "middlewares/printDate" // Middleware is located at ./controllers/middlewares/printDate.js
+  ]
+}
+```
+
+or absolute path (independent with `dir` value), in this case, the value must start with `./`
+````json
+{
+  "dir": "controllers",
+  "/orders": {
+    "dir": "orders",
+    "get": {
+      "controller": "getOrders"
+    },
+    "middlewares": [
+      "./middlewares/checkOrder" // Middleware is located at ./middlewares/checkOrder.js
+    ]
+  }
+}
+````
