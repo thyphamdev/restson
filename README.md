@@ -1,7 +1,23 @@
 # Json2Api
 Simple REST API design and implementation, all in one JSON file, for [Node](https://nodejs.org/en/)
 
-## Motivation
+# Table of Contents
+1. [Motivation](#motivation)
+2. [Installation](#installation)
+3. [Quick start](#quick-start)
+    1. [Sample project](#sample-project)
+4. [Writing endpoint handlers, middlewares](#writing-endpoint-handlers-middlewares)
+5. [API Json Schema](#api-json-schema)
+    1. [Keys](#keys)
+    2. [File path](#file-path)
+6. [API](#api)
+    1. [Server](#server)
+        1. [options](#options)
+    2. [APIError](#apierror)
+        1. [APIError Constructor parameters](#apierror-constructor-parameters)
+    3. [ServerCodes](#servercodes)
+
+## Motivation <a name="motivation"></a>
 After 3 years working with Node + Express to build Backend applications, I have faced a couple of problems
 related to REST APIs implementation:
 * Endpoints are declared in different files, which is very hard to track them or/and have an overview
@@ -20,13 +36,13 @@ we focus on writing the Endpoint handlers, middlewares, request validation schem
 All the APIs can be written in one JSON file, no need to declare routers. This way enforce a cleaner 
 architecture and all devs can have a much clearer overview on the whole API set.
 
-## Installation
+## Installation <a name="installation"></a>
 ````
 > npm install json2api
 ````
 
-## Quick start  
-### Sample project
+## Quick start  <a name="quick-start"></a>
+### Sample project <a name="sample-project"></a>
 We wanna have a set of REST APIs:
 ````
 GET  /api/v1/health-check
@@ -93,7 +109,7 @@ const apiSchema = require('./my.api.schema.v1');
 new Server({ apiSchema, rootUrl: '/api/v1' }).start();
 ```
 
-## Writing endpoint handlers, middlewares
+## Writing endpoint handlers, middlewares <a name="writing-endpoint-handlers-middlewares"></a>
 This lib enforces writing each endpoint handler in one js file only, the handler function must be exported at
 the end. The same rule applies to middlewares as well.
 ```javascript
@@ -108,9 +124,9 @@ module.exports = (req, res, next) => {
 }
 ````
 
-## API Json Schema
+## API Json Schema <a name="api-json-schema"></a>
 
-### Keys
+### Keys <a name="keys"></a>
 The API Json Schema includes 5 different key types:
 * `dir: string`: The main directory where the Endpoint handlers, middlewares and validation schemas are placed
 * `middlewares: array<string>`: A list of middlewares' file paths, each middleware is declared in one file.
@@ -131,7 +147,7 @@ path of the endpoint handler) or an object:
 * Key which start with `/`. (E.g. `/orders`): This key define the Endpoint of the url. The value of it
 can have the same keys as defined above or also the sub routes.
 
-### File path
+### File path <a name="file-path"></a>
 the file path to the endpoint handler can be the relative path (depend on `dir` value):
 ```json
 {
@@ -164,22 +180,22 @@ or absolute path (independent on `dir` value), in this case, the value must star
 }
 ````
 
-## API
-### Server
+## API <a name="api"></a>
+### Server <a name="server"></a>
 `Server` is the main component in `json2api`:
 ````javascript
 const json2api = require('json2api');
 const server = new json2api.Server(options);
 server.start();
 ````
-#### options
+#### options <a name="options"></a>
 | Property  | Description                                  | Type    | Default          |
 | ----------| -------------------------------------------- | ------- | ---------------- |
 | port      | server will start at this port               | Number  | 3000             |
 | apiSchema | [Required] File path of the API JSON Schema  | String  | No default value |
 | rootUrl   | Root URL of the API Set                      | String  | /                |
 
-### APIError
+### APIError <a name="apierror"></a>
 This is a predefined custom Error in Json2Api:
 ````javascript
 const { APIError, ServerCodes } = require('json2api');
@@ -196,7 +212,7 @@ const getOrderController = (req, res) => {
 
 module.export = getOrderController;
 ````
-#### APIError Constructor parameters
+#### APIError Constructor parameters <a name="apierror-constructor-parameters"></a>
 ````javascript
 throw new APIError(message, serverCode);
 ````
@@ -205,7 +221,7 @@ throw new APIError(message, serverCode);
 | message     | Message to API Consumer Client | String   | no default value  |
 | serverCode  | Server Code of the response    | Number   | 500               |
 
-### ServerCodes
+### ServerCodes <a name="servercodes"></a>
 This is a small util in Json2Api, it defines all server codes with 
 easy-to-remember constant values:
 ````javascript
