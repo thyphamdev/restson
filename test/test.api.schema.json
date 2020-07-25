@@ -1,6 +1,8 @@
 {
   "dir": "test.controllers",
   "/health-check": {
-    "get": "healthCheck"
+    "get": {
+      "handler": "healthCheck"
+    }
   }
 }

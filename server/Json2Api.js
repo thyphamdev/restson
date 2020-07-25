@@ -24,7 +24,7 @@ function getMiddlewares(routeConfig, dir) {
 }
 
 function getController(routerConfig, dir) {
-  const routerHandler = _.get(routerConfig, 'controller') || routerConfig;
+  const routerHandler = _.get(routerConfig, 'handler') || routerConfig;
   return ModuleGetter.getModule(routerHandler, dir);
 }
 
