@@ -68,7 +68,7 @@ class Json2Api {
 
   parseRoute(router, path, routeConfig, dir) {
     const subDir = ModuleGetter.getFullDir(routeConfig.dir, dir) || dir;
-    const middlewares = getMiddlewares(routeConfig, dir);
+    const middlewares = getMiddlewares(routeConfig, subDir);
 
     if (middlewares.length > 0) {
       router.use(path, ...middlewares);
@@ -82,7 +82,7 @@ class Json2Api {
   }
 
   convert() {
-    this.parseRoute(this.mainRouter, '/', this.apiSchema, './');
+    this.parseRoute(this.mainRouter, '/', this.apiSchema);
   }
 }
 

@@ -1,8 +1,47 @@
 {
   "dir": "test.controllers",
-  "/health-check": {
-    "get": {
-      "handler": "healthCheck"
+  "/orders": {
+    "dir": "orders",
+    "post": {
+      "handler": "createOrder"
+    },
+    "delete": {
+      "handler": "./test.controllers/orders/deleteOrder"
     }
-  }
+  },
+  "/articles": {
+    "dir": "articles",
+    "/:id": {
+      "get": "getArticleById",
+      "put": {
+        "handler": "updateArticle",
+        "validation": {
+          "body": "article.body.validation",
+          "query": "article.query.validation"
+        }
+      },
+      "validation": {
+        "params": "./test.controllers/validation/id.validation",
+        "headers": "article.header.validation"
+      }
+    }
+  },
+  "/greeting": {
+    "get": "greeting",
+    "/name": {
+      "get": "greeting",
+      "post": {
+        "handler": "greeting",
+        "middlewares": [
+          "./test.controllers/middlewares/changeNameInRequest"
+        ]
+      },
+      "middlewares": [
+        "middlewares/addNameToRequest"
+      ]
+    }
+  },
+  "middlewares": [
+    "middlewares/addGreetingToRequest"
+  ]
 }

@@ -1,6 +1,6 @@
 module.exports = (req, res) => {
   res.send({
-    message: 'Hello from createOrder',
+    message: 'Hello from updateArticle',
     data: req.body,
   });
 };
