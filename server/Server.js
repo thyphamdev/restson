@@ -1,10 +1,10 @@
 const express = require('express');
 
 const ServerConfig = require('./ServerConfig');
-const Json2Api = require('./Json2Api');
+const RestJson = require('./RestJson');
 
 function useApi(router, apiSchema) {
-  new Json2Api(router, apiSchema).convert();
+  new RestJson(router, apiSchema).convert();
 }
 
 class Server {

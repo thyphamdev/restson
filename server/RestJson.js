@@ -44,7 +44,7 @@ function addApiMethod(router, method, path, routeHandler, dir) {
   router[method](path, ControllerWrapper(controller));
 }
 
-class Json2Api {
+class RestJson {
   constructor(mainRouter, apiSchema) {
     this.mainRouter = mainRouter;
     this.apiSchema = apiSchema;
@@ -86,4 +86,4 @@ class Json2Api {
   }
 }
 
-module.exports = Json2Api;
+module.exports = RestJson;

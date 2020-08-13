@@ -1,5 +1,5 @@
 {
-  "name": "json2api",
+  "name": "restjson",
   "version": "1.0.0",
   "description": "Simple REST API design and implementation, all in one JSON file, for Node",
   "main": "index.js",
@@ -8,14 +8,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/thyphamdev/json2api.git"
+    "url": "git+https://github.com/thyphamdev/restjson.git"
   },
   "author": "Thy Pham",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/thyphamdev/json2api/issues"
+    "url": "https://github.com/thyphamdev/restjson/issues"
   },
-  "homepage": "https://github.com/thyphamdev/json2api#readme",
+  "homepage": "https://github.com/thyphamdev/restjson#readme",
   "dependencies": {
     "ajv": "^6.12.3",
     "body-parser": "^1.19.0",
