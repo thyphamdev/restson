@@ -12,9 +12,9 @@ describe('Validation test', () => {
     const wrongId = '123456';
     const validId = '12345';
     let endpoint = `${url}/articles/${wrongId}`;
-    await expect(request.get(endpoint)).to.eventually.be.rejectedWith('400 - "Invalid request\'s params: data.id should NOT be longer than 5 characters"');
+    await expect(request.get(endpoint)).to.eventually.be.rejectedWith('400 - "{\\"success\\":false,\\"message\\":\\"Invalid request\'s params: data.id should NOT be longer than 5 characters\\"}"');
     endpoint = `${url}/articles/${validId}`;
-    await expect(request.get(endpoint)).to.eventually.be.rejectedWith('400 - "Invalid request\'s headers: data should have required property \'user\'"');
+    await expect(request.get(endpoint)).to.eventually.be.rejectedWith('400 - "{\\"success\\":false,\\"message\\":\\"Invalid request\'s headers: data should have required property \'user\'\\"}"');
     await expect(
       request({
         method: 'GET',
@@ -29,7 +29,7 @@ describe('Validation test', () => {
   it('should validate body and query', async () => {
     const endpoint = `${url}/articles/12345`;
     await expect(request.put(endpoint))
-      .to.eventually.be.rejectedWith('400 - "Invalid request\'s headers: data should have required property \'user\'"');
+      .to.eventually.be.rejectedWith('400 - "{\\"success\\":false,\\"message\\":\\"Invalid request\'s headers: data should have required property \'user\'\\"}"');
 
     await expect(
       request({
@@ -39,7 +39,7 @@ describe('Validation test', () => {
           user: 'user-name',
         },
       }),
-    ).to.eventually.be.rejectedWith('400 - "Invalid request\'s query: data should have required property \'name\'"');
+    ).to.eventually.be.rejectedWith('400 - "{\\"success\\":false,\\"message\\":\\"Invalid request\'s query: data should have required property \'name\'\\"}"');
 
     await expect(
       request({
@@ -49,7 +49,7 @@ describe('Validation test', () => {
           user: 'user-name',
         },
       }),
-    ).to.eventually.be.rejectedWith('400 - "Invalid request\'s body: data should have required property \'variationId\'"');
+    ).to.eventually.be.rejectedWith('400 - "{\\"success\\":false,\\"message\\":\\"Invalid request\'s body: data should have required property \'variationId\'\\"}"');
 
     const response = await request({
       method: 'PUT',
