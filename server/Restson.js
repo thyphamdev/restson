@@ -44,7 +44,7 @@ function addApiMethod(router, method, path, routeHandler, dir) {
   router[method](path, ControllerWrapper(controller));
 }
 
-class RestJson {
+class Restson {
   constructor(mainRouter, apiSchema) {
     this.mainRouter = mainRouter;
     this.apiSchema = apiSchema;
@@ -86,4 +86,4 @@ class RestJson {
   }
 }
 
-module.exports = RestJson;
+module.exports = Restson;

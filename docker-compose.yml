@@ -1,6 +1,6 @@
 version: '3'
 services:
-  restjson:
+  restson:
     build: .
     ports:
       - "8081:8081"

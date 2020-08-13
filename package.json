@@ -1,5 +1,5 @@
 {
-  "name": "restjson",
+  "name": "restson",
   "version": "1.0.0",
   "description": "Simple REST API design and implementation, all in one JSON file, for Node",
   "main": "index.js",
@@ -8,14 +8,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/thyphamdev/restjson.git"
+    "url": "git+https://github.com/thyphamdev/restson.git"
   },
   "author": "Thy Pham",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/thyphamdev/restjson/issues"
+    "url": "https://github.com/thyphamdev/restson/issues"
   },
-  "homepage": "https://github.com/thyphamdev/restjson#readme",
+  "homepage": "https://github.com/thyphamdev/restson#readme",
   "dependencies": {
     "ajv": "^6.12.3",
     "body-parser": "^1.19.0",

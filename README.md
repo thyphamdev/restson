@@ -1,4 +1,4 @@
-# RestJson
+# Restson
 Simple REST API design and implementation, all in one JSON file, for [Node](https://nodejs.org/en/)
 
 # Table of Contents
@@ -38,7 +38,7 @@ architecture and all devs can have a much clearer overview on the whole API set.
 
 ## Installation <a name="installation"></a>
 ````
-> npm install restjson
+> npm install restson
 ````
 
 ## Quick start  <a name="quick-start"></a>
@@ -103,7 +103,7 @@ In file `my.api.schema.v1.json`
 
 In file `server.js`
 ```javascript
-const { Server } = require('restjson');
+const { Server } = require('restson');
 const apiSchema = require('./my.api.schema.v1');
 
 new Server({ apiSchema, rootUrl: '/api/v1' }).start();
@@ -182,10 +182,10 @@ or absolute path (independent on `dir` value), in this case, the value must star
 
 ## API <a name="api"></a>
 ### Server <a name="server"></a>
-`Server` is the main component in `restjson`:
+`Server` is the main component in `restson`:
 ````javascript
-const restjson = require('restjson');
-const server = new restjson.Server(options);
+const restson = require('restson');
+const server = new restson.Server(options);
 server.start();
 ````
 #### options <a name="options"></a>
@@ -196,9 +196,9 @@ server.start();
 | rootUrl   | Root URL of the API Set                      | String  | /                |
 
 ### APIError <a name="apierror"></a>
-This is a predefined custom Error in RestJson:
+This is a predefined custom Error in Restson:
 ````javascript
-const { APIError, ServerCodes } = require('restjson');
+const { APIError, ServerCodes } = require('restson');
 
 const getOrderController = (req, res) => {
   const order = OrderDAL.findById(req.params.orderId);
@@ -222,7 +222,7 @@ throw new APIError(message, serverCode);
 | serverCode  | Server Code of the response    | Number   | 500               |
 
 ### ServerCodes <a name="servercodes"></a>
-This is a small util in RestJson, it defines all server codes with 
+This is a small util in Restson, it defines all server codes with 
 easy-to-remember constant values:
 ````javascript
 module.exports = {
