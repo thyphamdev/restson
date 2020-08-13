@@ -1,6 +1,6 @@
 {
   "name": "restson",
-  "version": "1.0.0",
+  "version": "1.0.2",
   "description": "Simple REST API design and implementation, all in one JSON file, for Node",
   "main": "index.js",
   "scripts": {
@@ -22,7 +22,7 @@
     "cors": "^2.8.5",
     "express": "^4.17.1",
     "helmet": "^3.23.3",
-    "lodash": "^4.17.15",
+    "lodash": "^4.17.19",
     "winston": "^3.3.3"
   },
   "devDependencies": {
