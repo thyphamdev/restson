@@ -1,6 +1,6 @@
 {
   "name": "restson",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Simple REST API design and implementation, all in one JSON file, for Node",
   "main": "index.js",
   "scripts": {
